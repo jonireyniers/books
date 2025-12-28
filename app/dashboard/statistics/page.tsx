@@ -70,9 +70,10 @@ export default function StatisticsPage() {
       return date.getFullYear() === currentYear && date.getMonth() === currentMonth
     }).length
 
-    // Top authors
+    // Top authors (only from read books)
+    const readBooks = books.filter(b => b.status === 'gelezen')
     const authorCounts: Record<string, number> = {}
-    books.forEach(b => {
+    readBooks.forEach(b => {
       authorCounts[b.author] = (authorCounts[b.author] || 0) + 1
     })
     const topAuthors = Object.entries(authorCounts)
@@ -174,23 +175,47 @@ export default function StatisticsPage() {
       </div>
 
       {/* Monthly progress chart */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Leesvoortgang (laatste 6 maanden)</h2>
-        <div className="flex items-end justify-between gap-4 h-48">
+      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <h2 className="text-lg font-semibold text-gray-900 mb-6">📊 Leesvoortgang (laatste 6 maanden)</h2>
+        <div className="space-y-4">
           {stats.monthlyProgress.map((month, i) => {
             const maxCount = Math.max(...stats.monthlyProgress.map(m => m.count), 1)
-            const height = (month.count / maxCount) * 100
+            const percentage = (month.count / maxCount) * 100
             return (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                <div className="text-sm font-medium text-gray-700">{month.count}</div>
-                <div 
-                  className="w-full bg-teal-500 rounded-t transition-all hover:bg-teal-600"
-                  style={{ height: `${Math.max(height, 10)}%` }}
-                />
-                <div className="text-xs text-gray-600">{month.month}</div>
+              <div key={i} className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700 capitalize">{month.month}</span>
+                  <span className="text-gray-600">{month.count} boek{month.count !== 1 ? 'en' : ''}</span>
+                </div>
+                <div className="relative h-8 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all duration-1000 ease-out flex items-center justify-end pr-3"
+                    style={{ width: `${Math.max(percentage, month.count > 0 ? 10 : 0)}%` }}
+                  >
+                    {month.count > 0 && (
+                      <span className="text-white text-xs font-semibold">
+                        {month.count}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             )
           })}
+        </div>
+        
+        {/* Summary */}
+        <div className="mt-6 pt-6 border-t border-gray-200 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Totaal laatste 6 maanden: <span className="font-semibold text-gray-900">
+              {stats.monthlyProgress.reduce((sum, m) => sum + m.count, 0)} boeken
+            </span>
+          </div>
+          <div className="text-sm text-gray-600">
+            Gemiddeld: <span className="font-semibold text-gray-900">
+              {(stats.monthlyProgress.reduce((sum, m) => sum + m.count, 0) / 6).toFixed(1)} per maand
+            </span>
+          </div>
         </div>
       </div>
 

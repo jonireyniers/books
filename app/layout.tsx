@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mijn Boeken",
-  description: "Houd je gelezen boeken bij en deel ze met vrienden",
+  title: "Bookly",
+  description: "Track your reading and share books with friends",
 };
 
 export default function RootLayout({

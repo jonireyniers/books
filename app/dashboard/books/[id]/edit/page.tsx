@@ -23,6 +23,8 @@ export default function EditBookPage() {
   const [rating, setRating] = useState<number | null>(null)
   const [review, setReview] = useState('')
   const [isPublic, setIsPublic] = useState(true)
+  const [recommendToFriends, setRecommendToFriends] = useState(false)
+  const [availableForLending, setAvailableForLending] = useState(false)
   const [tags, setTags] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -128,6 +130,8 @@ export default function EditBookPage() {
       setRating(book.rating)
       setReview(book.review || '')
       setIsPublic(book.is_public)
+      setRecommendToFriends(book.recommend_to_friends || false)
+      setAvailableForLending(book.available_for_lending || false)
 
       // Load tags
       const { data: bookTags } = await supabase
@@ -172,6 +176,8 @@ export default function EditBookPage() {
         rating,
         review: review || null,
         is_public: isPublic,
+        recommend_to_friends: recommendToFriends,
+        available_for_lending: availableForLending,
       })
       .eq('id', bookId)
 
@@ -482,7 +488,7 @@ export default function EditBookPage() {
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent outline-none resize-none"
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent outline-none resize-none text-gray-900 placeholder:text-gray-400"
                 placeholder="Wat vond je van dit boek?"
               />
             </div>
@@ -513,6 +519,32 @@ export default function EditBookPage() {
           />
           <label htmlFor="isPublic" className="ml-2 text-sm text-neutral-700">
             Maak dit boek zichtbaar voor vrienden
+          </label>
+        </div>
+
+        <div className="flex items-center">
+          <input
+            id="recommendToFriends"
+            type="checkbox"
+            checked={recommendToFriends}
+            onChange={(e) => setRecommendToFriends(e.target.checked)}
+            className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-neutral-300 rounded"
+          />
+          <label htmlFor="recommendToFriends" className="ml-2 text-sm text-neutral-700">
+            ⭐ Aanbevelen aan vrienden (toon in aanbevelingen)
+          </label>
+        </div>
+
+        <div className="flex items-center">
+          <input
+            id="availableForLending"
+            type="checkbox"
+            checked={availableForLending}
+            onChange={(e) => setAvailableForLending(e.target.checked)}
+            className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-neutral-300 rounded"
+          />
+          <label htmlFor="availableForLending" className="ml-2 text-sm text-neutral-700">
+            📚 Beschikbaar voor lenen/kopen (vrienden kunnen vragen)
           </label>
         </div>
 

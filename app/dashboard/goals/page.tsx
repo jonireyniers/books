@@ -60,14 +60,21 @@ export default function GoalsPage() {
 
     const { error } = await supabase
       .from('reading_goals')
-      .upsert({
-        user_id: user.id,
-        year: currentYear,
-        target_books: target
-      })
+      .upsert(
+        {
+          user_id: user.id,
+          year: currentYear,
+          target_books: target
+        },
+        {
+          onConflict: 'user_id,year'
+        }
+      )
 
     if (!error) {
       setGoal(target)
+    } else {
+      console.error('Error saving goal:', error)
     }
     setSaving(false)
   }
@@ -145,15 +152,24 @@ export default function GoalsPage() {
           </div>
 
           {/* Motivation card */}
-          {remaining > 0 && (
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-3">💪 Blijf gemotiveerd!</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>• Je moet gemiddeld <strong>{(remaining / (12 - new Date().getMonth())).toFixed(1)}</strong> boek{remaining > 1 ? 'en' : ''} per maand lezen</p>
-                <p>• Dat is ongeveer <strong>{Math.ceil(remaining / ((365 - new Date().getDayOfYear()) / 7))}</strong> boek per week</p>
+          {remaining > 0 && (() => {
+            const now = new Date()
+            const monthsLeft = Math.max(12 - now.getMonth(), 1)
+            const startOfYear = new Date(now.getFullYear(), 0, 1)
+            const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)) + 1
+            const daysLeft = Math.max(365 - dayOfYear, 1)
+            const weeksLeft = Math.max(Math.floor(daysLeft / 7), 1)
+            
+            return (
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="font-semibold text-gray-900 mb-3">💪 Blijf gemotiveerd!</h3>
+                <div className="space-y-2 text-sm text-gray-600">
+                  <p>• Je moet gemiddeld <strong>{(remaining / monthsLeft).toFixed(1)}</strong> boek{remaining > 1 ? 'en' : ''} per maand lezen</p>
+                  <p>• Dat is ongeveer <strong>{Math.ceil(remaining / weeksLeft)}</strong> boek per week</p>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Edit goal */}
           <div className="bg-white p-6 rounded-lg border border-gray-200">

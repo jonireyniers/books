@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -77,13 +78,15 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <svg className="w-12 h-12 mx-auto mb-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          <h1 className="text-3xl font-light text-gray-900 mb-2">
-            Account aanmaken
-          </h1>
-          <p className="text-gray-600">Begin met het bijhouden van je boeken</p>
+          <Image 
+            src="/bookly.png" 
+            alt="Bookly" 
+            width={200} 
+            height={200} 
+            className="mx-auto mb-6"
+            priority
+          />
+          <p className="text-gray-600 text-lg">Start tracking your books</p>
         </div>
 
         <form onSubmit={handleRegister} className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">

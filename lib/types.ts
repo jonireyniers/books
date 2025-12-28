@@ -26,6 +26,9 @@ export interface Book {
   rating: number | null
   review: string | null
   is_public: boolean
+  page_count: number | null
+  recommend_to_friends: boolean
+  available_for_lending: boolean
   created_at: string
   updated_at: string
 }

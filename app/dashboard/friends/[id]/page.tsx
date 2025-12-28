@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ReadingStatus } from '@/lib/types'
+import LendingRequestButton from './LendingRequestButton'
 
 const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
@@ -115,12 +116,24 @@ export default async function FriendProfilePage({ params }: { params: Promise<{ 
             {books.map((book) => (
               <div
                 key={book.id}
-                className="bg-white p-5 rounded-lg border border-neutral-200"
+                className="bg-white p-5 rounded-lg border border-neutral-200 hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start mb-3">
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[book.status as ReadingStatus]}`}>
-                    {statusLabels[book.status as ReadingStatus]}
-                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${statusColors[book.status as ReadingStatus]}`}>
+                      {statusLabels[book.status as ReadingStatus]}
+                    </span>
+                    {book.recommend_to_friends && (
+                      <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
+                        ⭐ Aangeraden
+                      </span>
+                    )}
+                    {book.available_for_lending && (
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        📚 Beschikbaar
+                      </span>
+                    )}
+                  </div>
                   {book.rating && (
                     <div className="text-sm text-neutral-600">
                       {'⭐'.repeat(book.rating)}
@@ -145,6 +158,14 @@ export default async function FriendProfilePage({ params }: { params: Promise<{ 
                   <p className="text-xs text-neutral-500 mt-3">
                     Gelezen op {new Date(book.end_date).toLocaleDateString('nl-NL')}
                   </p>
+                )}
+
+                {book.available_for_lending && (
+                  <LendingRequestButton
+                    bookId={book.id}
+                    ownerId={id}
+                    bookTitle={book.title}
+                  />
                 )}
               </div>
             ))}

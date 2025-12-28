@@ -112,7 +112,7 @@ export default function AddFriendForm() {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="gebruikersnaam"
           required
-          className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent outline-none"
+          className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-neutral-900 focus:border-transparent outline-none text-gray-900 placeholder:text-gray-400"
         />
         <button
           type="submit"

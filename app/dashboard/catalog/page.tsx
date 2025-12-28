@@ -135,7 +135,7 @@ export default function CatalogPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Bijv. 'Harry Potter', 'J.K. Rowling' of ISBN..."
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400"
             />
             <button
               type="submit"
