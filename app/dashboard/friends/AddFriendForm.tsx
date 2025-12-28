@@ -21,18 +21,35 @@ export default function AddFriendForm() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    // Find user by username
-    const { data: friendProfile, error: searchError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('username', username.toLowerCase())
-      .single()
-
-    if (searchError || !friendProfile) {
-      setError('Gebruiker niet gevonden')
+    // Check if search is empty
+    if (!username.trim()) {
+      setError('Voer een gebruikersnaam in')
       setLoading(false)
       return
     }
+
+    // Find user by username (case-insensitive)
+    const { data: friendProfiles, error: searchError } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .ilike('username', username.trim())
+
+    console.log('Search results:', friendProfiles, 'Error:', searchError)
+
+    if (searchError) {
+      console.error('Database error:', searchError)
+      setError('Er ging iets mis bij het zoeken')
+      setLoading(false)
+      return
+    }
+
+    if (!friendProfiles || friendProfiles.length === 0) {
+      setError(`Gebruiker "${username}" niet gevonden. Controleer de spelling.`)
+      setLoading(false)
+      return
+    }
+
+    const friendProfile = friendProfiles[0]
 
     if (friendProfile.id === user.id) {
       setError('Je kan jezelf niet toevoegen als vriend')

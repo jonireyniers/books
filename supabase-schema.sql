@@ -22,6 +22,11 @@ CREATE TABLE books (
   author TEXT NOT NULL,
   description TEXT,
   cover_image_url TEXT,
+  isbn TEXT,
+  page_count INTEGER,
+  published_date TEXT,
+  publisher TEXT,
+  language TEXT,
   
   -- Reading status
   status TEXT NOT NULL CHECK (status IN ('wil_lezen', 'bezig', 'gelezen')),

@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ReadingStatus } from '@/lib/types'
 import DeleteBookButton from './DeleteBookButton'
+import StatusSelector from './StatusSelector'
 
 const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
@@ -50,31 +51,80 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
         </Link>
       </div>
 
-      <div className="bg-white p-8 rounded-lg border border-neutral-200">
-        <div className="flex justify-between items-start mb-6">
-          <div>
-            <span className="text-sm px-3 py-1 rounded-full bg-neutral-100 text-neutral-700">
-              {statusLabels[book.status as ReadingStatus]}
-            </span>
+      <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+        {book.cover_image_url && (
+          <div className="w-full h-64 bg-gray-100">
+            <img
+              src={book.cover_image_url}
+              alt={book.title}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div className="flex gap-2">
-            <Link
-              href={`/dashboard/books/${book.id}/edit`}
-              className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors text-sm"
-            >
-              Bewerken
-            </Link>
-            <DeleteBookButton bookId={book.id} />
+        )}
+        
+        <div className="p-8">
+          <div className="flex justify-between items-start mb-6">
+            <StatusSelector bookId={book.id} currentStatus={book.status as ReadingStatus} />
+            <div className="flex gap-2">
+              <Link
+                href={`/dashboard/books/${book.id}/edit`}
+                className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors text-sm"
+              >
+                Bewerken
+              </Link>
+              <DeleteBookButton bookId={book.id} />
+            </div>
           </div>
-        </div>
 
-        <h1 className="text-3xl font-light text-neutral-900 mb-2">{book.title}</h1>
-        <p className="text-lg text-neutral-600 mb-6">{book.author}</p>
+          <h1 className="text-3xl font-light text-neutral-900 mb-2">{book.title}</h1>
+          <p className="text-lg text-neutral-600 mb-6">{book.author}</p>
 
-        {book.description && (
-          <div className="mb-6">
-            <h2 className="text-sm font-medium text-neutral-700 mb-2">Beschrijving</h2>
-            <p className="text-neutral-600">{book.description}</p>
+          {book.description && (
+            <div className="mb-6">
+              <h2 className="text-sm font-medium text-neutral-700 mb-2">Beschrijving</h2>
+              <p className="text-neutral-600">{book.description}</p>
+            </div>
+          )}
+
+        {/* Book metadata */}
+        {(book.isbn || book.page_count || book.published_date || book.publisher || book.language) && (
+          <div className="mb-6 p-4 bg-neutral-50 rounded-lg space-y-2">
+            <h2 className="text-sm font-medium text-neutral-700 mb-3">Boekgegevens</h2>
+            {book.isbn && (
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-600">ISBN:</span>
+                <span className="text-neutral-900 font-medium">{book.isbn}</span>
+              </div>
+            )}
+            {book.page_count && (
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-600">Aantal pagina's:</span>
+                <span className="text-neutral-900 font-medium">{book.page_count}</span>
+              </div>
+            )}
+            {book.published_date && (
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-600">Gepubliceerd:</span>
+                <span className="text-neutral-900 font-medium">{book.published_date}</span>
+              </div>
+            )}
+            {book.publisher && (
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-600">Uitgever:</span>
+                <span className="text-neutral-900 font-medium">{book.publisher}</span>
+              </div>
+            )}
+            {book.language && (
+              <div className="flex justify-between text-sm">
+                <span className="text-neutral-600">Taal:</span>
+                <span className="text-neutral-900 font-medium">
+                  {book.language === 'nl' ? 'Nederlands' : 
+                   book.language === 'en' ? 'Engels' : 
+                   book.language === 'fr' ? 'Frans' : 
+                   book.language === 'de' ? 'Duits' : book.language}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
@@ -134,6 +184,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
           <p className="text-sm text-neutral-600">
             {book.is_public ? '🌍 Zichtbaar voor vrienden' : '🔒 Privé'}
           </p>
+        </div>
         </div>
       </div>
     </div>

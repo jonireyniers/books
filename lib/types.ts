@@ -1,4 +1,4 @@
-export type ReadingStatus = 'wil_lezen' | 'bezig' | 'gelezen'
+export type ReadingStatus = 'verlanglijst' | 'wil_lezen' | 'bezig' | 'gelezen'
 export type FriendshipStatus = 'pending' | 'accepted' | 'blocked'
 
 export interface Profile {
@@ -18,6 +18,8 @@ export interface Book {
   author: string
   description: string | null
   cover_image_url: string | null
+  cover_url: string | null
+  isbn: string | null
   status: ReadingStatus
   start_date: string | null
   end_date: string | null
