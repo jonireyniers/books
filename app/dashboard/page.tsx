@@ -147,27 +147,42 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div>
-        <h1 className="text-3xl font-light text-gray-900 mb-2">
-          Welkom terug, {profile?.display_name || profile?.username}
-        </h1>
-        <p className="text-gray-600">
-          Je leesoverzicht
-        </p>
+      <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              Welkom terug, {profile?.display_name || profile?.username}
+            </h1>
+            <p className="text-gray-600 text-lg">
+              Dashboard overzicht
+            </p>
+          </div>
+          <div className="hidden md:flex gap-4">
+            <div className="text-right">
+              <p className="text-sm text-gray-500 font-medium">Dit jaar</p>
+              <p className="text-2xl font-bold text-teal-600">{booksThisYear}</p>
+            </div>
+            <div className="w-px bg-gray-200"></div>
+            <div className="text-right">
+              <p className="text-sm text-gray-500 font-medium">Totaal</p>
+              <p className="text-2xl font-bold text-gray-900">{totalBooks}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Totaal gelezen</p>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">{totalBooks}</div>
-          <p className="text-sm text-gray-600">boeken</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div className="bg-white p-5 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Totaal gelezen</p>
+          <div className="text-3xl font-bold text-gray-900 mb-0.5">{totalBooks}</div>
+          <p className="text-sm text-gray-500 font-medium">boeken</p>
         </div>
         
-        <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Dit jaar</p>
-          <div className="text-3xl font-semibold text-teal-600 mb-1">{booksThisYear}</div>
-          <p className="text-sm text-gray-600">boeken</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 hover:border-teal-300 hover:shadow-sm transition-all">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Dit jaar</p>
+          <div className="text-3xl font-bold text-teal-600 mb-0.5">{booksThisYear}</div>
+          <p className="text-sm text-gray-500 font-medium">boeken</p>
         </div>
         
         <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">

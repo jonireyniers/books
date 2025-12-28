@@ -87,34 +87,34 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex space-x-12">
-              <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="flex space-x-8">
+              <Link href="/dashboard" className="flex items-center hover:opacity-75 transition-opacity">
                 <Image 
                   src="/bookly.png" 
                   alt="Bookly" 
-                  width={64} 
-                  height={64} 
+                  width={48} 
+                  height={48} 
                   className="object-contain"
                 />
               </Link>
               
-              <div className="hidden sm:flex sm:space-x-8 sm:items-center">
+              <div className="hidden sm:flex sm:space-x-1 sm:items-center">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`text-sm font-medium transition-colors relative ${
+                    className={`text-sm font-semibold transition-all px-3 py-2 rounded-lg relative ${
                       pathname === item.href
-                        ? 'text-teal-600 border-b-2 border-teal-600 pb-4'
-                        : 'text-gray-600 hover:text-gray-900 pb-4 border-b-2 border-transparent'
+                        ? 'text-teal-600 bg-teal-50'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     {item.name}
                     {item.href === '/dashboard/lending' && pendingRequests > 0 && (
-                      <span className="absolute -top-1 -right-2 px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-full">
+                      <span className="absolute -top-0.5 -right-0.5 px-1.5 py-0.5 text-[10px] bg-red-500 text-white rounded-full font-bold">
                         {pendingRequests}
                       </span>
                     )}
@@ -125,11 +125,11 @@ export default function DashboardLayout({
 
             <div className="flex items-center gap-4">
               {username && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
-                  <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-semibold">
+                <div className="flex items-center gap-2.5 px-3 py-1.5 bg-gray-100 rounded-lg border border-gray-200">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 text-white flex items-center justify-center text-xs font-bold">
                     {username[0].toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{username}</span>
+                  <span className="text-sm font-semibold text-gray-800">{username}</span>
                 </div>
               )}
               <button
