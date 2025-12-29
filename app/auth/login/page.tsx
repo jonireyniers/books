@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -11,15 +11,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const msg = searchParams.get('message')
+    if (msg) {
+      setMessage(msg)
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
@@ -27,37 +36,72 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else {
+      return
+    }
+
+    // Check if profile exists, create if it doesn't
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', data.user.id)
+        .single()
+
+      if (!profile) {
+        // Create profile from user metadata or email
+        const username = data.user.user_metadata?.username || data.user.email?.split('@')[0] || 'user'
+        const displayName = data.user.user_metadata?.display_name || username
+
+        await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            username: username.toLowerCase(),
+            display_name: displayName,
+          })
+      }
+
       router.push('/dashboard')
       router.refresh()
+    } else {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <Image 
-            src="/bookly.png" 
-            alt="Bookly" 
-            width={200} 
-            height={200} 
-            className="mx-auto mb-6"
-            priority
-          />
-          <p className="text-gray-600 text-lg">Welkom terug</p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center mb-6">
+            <Image 
+              src="/bookly.png" 
+              alt="Bookly" 
+              width={120} 
+              height={120} 
+              className="rounded-xl"
+              priority
+            />
+          </div>
+          <h1 className="text-3xl font-semibold text-neutral-900 mb-2 tracking-tight">Welkom terug</h1>
+          <p className="text-neutral-500">Log in op je account</p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+        <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl border border-neutral-200">
+          {message && (
+            <div className="bg-blue-50 text-blue-700 p-4 rounded-lg text-sm border border-blue-100 mb-6">
+              {message}
+            </div>
+          )}
+          
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200 mb-6">
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-100 mb-6">
               {error}
             </div>
           )}
 
           <div className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-neutral-900 mb-2">
                 Email
               </label>
               <input
@@ -66,13 +110,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900"
+                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="jouw@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-neutral-900 mb-2">
                 Wachtwoord
               </label>
               <input
@@ -81,7 +125,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900"
+                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="••••••••"
               />
             </div>
@@ -90,14 +134,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-teal-600 text-white py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium mt-6"
+            className="w-full text-white py-3.5 px-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium mt-6"
+            style={{ backgroundColor: '#155e68' }}
           >
-            {loading ? 'Bezig met inloggen...' : 'Inloggen'}
+            {loading ? 'Bezig...' : 'Inloggen'}
           </button>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-neutral-600 mt-6">
             Nog geen account?{' '}
-            <Link href="/auth/register" className="text-teal-600 hover:text-teal-700 font-medium">
+            <Link href="/auth/register" className="text-neutral-900 hover:underline font-medium">
               Registreer hier
             </Link>
           </p>

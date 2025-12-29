@@ -149,6 +149,20 @@ export default function CatalogPage() {
             💡 Tip: Zoek op titel, auteur of ISBN voor de beste resultaten
           </p>
         </form>
+
+        {/* Manual Add Link - Always visible under search */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600 mb-2">Of</p>
+          <Link
+            href="/dashboard/books/new"
+            className="inline-flex items-center px-5 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Voeg handmatig toe
+          </Link>
+        </div>
       </div>
 
       {/* Results */}
@@ -164,7 +178,7 @@ export default function CatalogPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Geen resultaten gevonden</h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-6">
             Probeer een andere zoekterm of controleer de spelling
           </p>
         </div>

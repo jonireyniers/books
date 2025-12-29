@@ -13,12 +13,12 @@ export async function POST(request: Request) {
   const formData = await request.formData()
   const friendshipId = formData.get('friendshipId') as string
 
-  // Update friendship status
+  // Delete friendship (works for both directions)
   const { error } = await supabase
     .from('friendships')
-    .update({ status: 'accepted' })
+    .delete()
     .eq('id', friendshipId)
-    .eq('friend_id', user.id)
+    .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

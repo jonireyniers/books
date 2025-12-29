@@ -72,7 +72,7 @@ export default function BooksPage() {
           <p className="text-gray-600">Je persoonlijke collectie</p>
         </div>
         <Link
-          href="/dashboard/books/new"
+          href="/dashboard/catalog"
           className="inline-flex items-center px-6 py-3 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors"
         >
           Boek toevoegen

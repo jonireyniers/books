@@ -51,8 +51,19 @@ export default function RegisterPage() {
       return
     }
 
-    // Create profile
-    if (authData.user) {
+    // Check if email confirmation is required
+    if (authData.user && !authData.session) {
+      // Email confirmation is required
+      setError(null)
+      setLoading(false)
+      // Show success message instead of error
+      router.push('/auth/login?message=Controleer je email om je account te activeren')
+      return
+    }
+
+    // If user is immediately logged in (no email confirmation required)
+    if (authData.user && authData.session) {
+      // Create profile
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -62,9 +73,8 @@ export default function RegisterPage() {
         })
 
       if (profileError) {
-        // Clean up auth user if profile creation fails
-        await supabase.auth.admin.deleteUser(authData.user.id)
-        setError('Er ging iets mis bij het aanmaken van je account. Probeer opnieuw.')
+        console.error('Profile creation error:', profileError)
+        setError('Er ging iets mis bij het aanmaken van je profiel. Probeer opnieuw in te loggen.')
         setLoading(false)
         return
       }
@@ -75,30 +85,33 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <Image 
-            src="/bookly.png" 
-            alt="Bookly" 
-            width={200} 
-            height={200} 
-            className="mx-auto mb-6"
-            priority
-          />
-          <p className="text-gray-600 text-lg">Start tracking your books</p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center mb-6">
+            <Image 
+              src="/bookly.png" 
+              alt="Bookly" 
+              width={120} 
+              height={120} 
+              className="rounded-xl"
+              priority
+            />
+          </div>
+          <h1 className="text-3xl font-semibold text-neutral-900 mb-2 tracking-tight">Account aanmaken</h1>
+          <p className="text-neutral-500">Begin met het bijhouden van je boeken</p>
         </div>
 
-        <form onSubmit={handleRegister} className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+        <form onSubmit={handleRegister} className="bg-white p-8 rounded-xl border border-neutral-200">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-100 mb-6">
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-neutral-900 mb-2">
                 Gebruikersnaam
               </label>
               <input
@@ -108,13 +121,13 @@ export default function RegisterPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 minLength={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900"
+                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="jouwgebruikersnaam"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-neutral-900 mb-2">
                 Email
               </label>
               <input
@@ -123,13 +136,13 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900"
+                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="jouw@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-neutral-900 mb-2">
                 Wachtwoord
               </label>
               <input
@@ -139,24 +152,25 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all text-gray-900"
+                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="••••••••"
               />
-              <p className="text-xs text-gray-500 mt-2">Minimaal 6 karakters</p>
+              <p className="text-xs text-neutral-500 mt-2">Minimaal 6 karakters</p>
             </div>
           </div>
           
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-teal-600 text-white py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium mt-6"
+            className="w-full text-white py-3.5 px-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium mt-6"
+            style={{ backgroundColor: '#155e68' }}
           >
             {loading ? 'Account aanmaken...' : 'Registreren'}
           </button>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-neutral-600 mt-6">
             Al een account?{' '}
-            <Link href="/auth/login" className="text-teal-600 hover:text-teal-700 font-medium">
+            <Link href="/auth/login" className="text-neutral-900 hover:underline font-medium">
               Log hier in
             </Link>
           </p>

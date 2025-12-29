@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import BookCard from './BookCard'
+import FriendBookCard from './FriendBookCard'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -145,76 +147,77 @@ export default async function DashboardPage() {
   }) || []
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              Welkom terug, {profile?.display_name || profile?.username}
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Dashboard overzicht
-            </p>
-          </div>
-          <div className="hidden md:flex gap-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-500 font-medium">Dit jaar</p>
-              <p className="text-2xl font-bold text-teal-600">{booksThisYear}</p>
-            </div>
-            <div className="w-px bg-gray-200"></div>
-            <div className="text-right">
-              <p className="text-sm text-gray-500 font-medium">Totaal</p>
-              <p className="text-2xl font-bold text-gray-900">{totalBooks}</p>
+    <div className="space-y-16">
+      {/* Hero Section - Modern eye-catcher */}
+      <div className="pt-8 pb-4">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-600 via-cyan-500 to-blue-500 p-1">
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-400/20 via-cyan-400/20 to-blue-400/20 animate-pulse"></div>
+          <div className="relative bg-white rounded-[22px] p-12 md:p-16">
+            <div className="space-y-2">
+              <h1 className="text-6xl md:text-7xl font-black tracking-tight text-neutral-900">
+                Welkom terug,
+              </h1>
+              <h2 className="text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-teal-600 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                {profile?.display_name || profile?.username}
+              </h2>
+              <p className="text-xl text-neutral-600 pt-4">
+                Elk boek is een nieuw avontuur.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        <div className="bg-white p-5 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Totaal gelezen</p>
-          <div className="text-3xl font-bold text-gray-900 mb-0.5">{totalBooks}</div>
-          <p className="text-sm text-gray-500 font-medium">boeken</p>
+      {/* Stats Grid - Minimal and clean */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white p-8 rounded-xl border transition-all hover:shadow-lg" style={{ borderColor: '#155e68' }}>
+          <p className="text-sm font-medium mb-3 uppercase tracking-wide" style={{ color: '#155e68' }}>
+            Totaal gelezen
+          </p>
+          <div className="text-4xl font-semibold mb-1" style={{ color: '#155e68' }}>{totalBooks}</div>
+          <p className="text-sm text-neutral-400">boeken</p>
         </div>
         
-        <div className="bg-white p-5 rounded-xl border border-gray-200 hover:border-teal-300 hover:shadow-sm transition-all">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Dit jaar</p>
-          <div className="text-3xl font-bold text-teal-600 mb-0.5">{booksThisYear}</div>
-          <p className="text-sm text-gray-500 font-medium">boeken</p>
+        <div className="bg-white p-8 rounded-xl border transition-all hover:shadow-lg" style={{ borderColor: '#155e68' }}>
+          <p className="text-sm font-medium mb-3 uppercase tracking-wide" style={{ color: '#155e68' }}>
+            Dit jaar
+          </p>
+          <div className="text-4xl font-semibold mb-1" style={{ color: '#155e68' }}>{booksThisYear}</div>
+          <p className="text-sm text-neutral-400">boeken</p>
         </div>
         
-        <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Gemiddelde rating</p>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">{averageRating}</div>
-          <p className="text-sm text-gray-600">sterren</p>
+        <div className="bg-white p-8 rounded-xl border transition-all hover:shadow-lg" style={{ borderColor: '#155e68' }}>
+          <p className="text-sm font-medium mb-3 uppercase tracking-wide" style={{ color: '#155e68' }}>
+            Gemiddelde
+          </p>
+          <div className="text-4xl font-semibold mb-1" style={{ color: '#155e68' }}>{averageRating}</div>
+          <p className="text-sm text-neutral-400">sterren</p>
         </div>
         
-        <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Momenteel</p>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">{currentlyReading.length}</div>
-          <p className="text-sm text-gray-600">aan het lezen</p>
+        <div className="bg-white p-8 rounded-xl border transition-all hover:shadow-lg" style={{ borderColor: '#155e68' }}>
+          <p className="text-sm font-medium mb-3 uppercase tracking-wide" style={{ color: '#155e68' }}>
+            Momenteel
+          </p>
+          <div className="text-4xl font-semibold mb-1" style={{ color: '#155e68' }}>{currentlyReading.length}</div>
+          <p className="text-sm text-neutral-400">aan het lezen</p>
         </div>
       </div>
 
       {/* Current Reading */}
       {currentlyReading.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Momenteel aan het lezen</h2>
-            <span className="text-sm text-gray-500">{currentlyReading.length} {currentlyReading.length === 1 ? 'boek' : 'boeken'}</span>
-          </div>
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold tracking-tight" style={{ color: '#155e68' }}>
+            Momenteel aan het lezen
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {currentlyReading.map((book) => (
-              <Link
+              <BookCard
                 key={book.id}
+                id={book.id}
+                title={book.title}
+                author={book.author}
                 href={`/dashboard/books/${book.id}`}
-                className="group bg-white p-6 rounded-lg border border-gray-200 hover:shadow-lg hover:border-teal-500 transition-all"
-              >
-                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">{book.title}</h3>
-                <p className="text-sm text-gray-600">{book.author}</p>
-              </Link>
+              />
             ))}
           </div>
         </div>
@@ -222,37 +225,37 @@ export default async function DashboardPage() {
 
       {/* Wishlist */}
       {wishlist.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Verlanglijst</h2>
-            <span className="text-sm text-gray-500">{wishlist.length} {wishlist.length === 1 ? 'boek' : 'boeken'}</span>
-          </div>
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold tracking-tight" style={{ color: '#155e68' }}>
+            Verlanglijst
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {wishlist.slice(0, 6).map((book) => (
-              <Link
+              <BookCard
                 key={book.id}
+                id={book.id}
+                title={book.title}
+                author={book.author}
                 href={`/dashboard/books/${book.id}`}
-                className="group bg-white p-6 rounded-lg border border-gray-200 hover:shadow-lg hover:border-teal-500 transition-all"
-              >
-                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">{book.title}</h3>
-                <p className="text-sm text-gray-600">{book.author}</p>
-              </Link>
+              />
             ))}
           </div>
         </div>
       )}
 
       {/* Quick Actions */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <Link
-          href="/dashboard/books/new"
-          className="inline-flex items-center px-6 py-3 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors"
+          href="/dashboard/catalog"
+          className="inline-flex items-center justify-center px-6 py-3.5 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors"
+          style={{ backgroundColor: '#155e68' }}
         >
           Boek toevoegen
         </Link>
         <Link
           href="/dashboard/books"
-          className="inline-flex items-center px-6 py-3 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:border-gray-400 transition-colors"
+          className="inline-flex items-center justify-center px-6 py-3.5 bg-white text-sm font-medium rounded-lg border transition-colors hover:shadow-md"
+          style={{ borderColor: '#155e68', color: '#155e68' }}
         >
           Alle boeken bekijken
         </Link>
@@ -260,34 +263,21 @@ export default async function DashboardPage() {
 
       {/* Friends Currently Reading */}
       {friendsReadingWithProfiles.length > 0 && (
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            📖 Vrienden lezen nu
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold tracking-tight" style={{ color: '#155e68' }}>
+            Vrienden lezen nu
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {friendsReadingWithProfiles.map((book) => (
-              <Link
+              <FriendBookCard
                 key={book.id}
-                href={`/dashboard/friends/${book.user_id}`}
-                className="group flex gap-3 p-3 rounded-lg border border-gray-200 hover:border-teal-500 hover:shadow-md transition-all"
-              >
-                {book.cover_image_url && (
-                  <div className="w-12 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-100">
-                    <img 
-                      src={book.cover_image_url} 
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-teal-600 font-medium mb-1">{book.readerName}</p>
-                  <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-teal-600 transition-colors">
-                    {book.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 truncate">{book.author}</p>
-                </div>
-              </Link>
+                id={book.id}
+                title={book.title}
+                author={book.author}
+                userId={book.user_id}
+                coverImageUrl={book.cover_image_url}
+                readerName={book.readerName}
+              />
             ))}
           </div>
         </div>
@@ -297,35 +287,41 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Leaderboard */}
         {leaderboardWithNames.length > 0 && (
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              🏆 Leaderboard {currentYear}
+          <div className="bg-white p-8 rounded-2xl border" style={{ borderColor: '#155e68' }}>
+            <h2 className="text-xl font-bold mb-6 tracking-tight" style={{ color: '#155e68' }}>
+              Leaderboard {currentYear}
             </h2>
             <div className="space-y-3">
               {leaderboardWithNames.map((entry, index) => (
                 <div 
                   key={entry.userId}
-                  className={`flex items-center justify-between p-3 rounded-lg ${
-                    entry.isCurrentUser ? 'bg-teal-50 border border-teal-200' : 'bg-gray-50'
-                  }`}
+                  className={`flex items-center justify-between p-3 rounded-lg border transition-all hover:shadow-md`}
+                  style={entry.isCurrentUser ? { 
+                    backgroundColor: '#f0f9f9',
+                    borderColor: '#155e68'
+                  } : {
+                    backgroundColor: '#f9fafb',
+                    borderColor: '#e5e7eb'
+                  }}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`text-lg font-bold ${
-                      index === 0 ? 'text-yellow-500' : 
-                      index === 1 ? 'text-gray-400' : 
-                      index === 2 ? 'text-orange-600' : 'text-gray-400'
-                    }`}>
+                    <span className={`text-lg font-bold`}
+                      style={{
+                        color: index === 0 ? '#fbbf24' : 
+                              index === 1 ? '#9ca3af' : 
+                              index === 2 ? '#f97316' : '#155e68'
+                      }}>
                       #{index + 1}
                     </span>
                     <div className="flex-1">
-                      <span className={`font-medium ${entry.isCurrentUser ? 'text-teal-700' : 'text-gray-700'}`}>
+                      <span className="font-medium" style={{ color: entry.isCurrentUser ? '#155e68' : '#374151' }}>
                         {entry.isCurrentUser ? 'Jij' : entry.name}
                       </span>
                       <p className="text-xs text-gray-500">{entry.bookCount} boeken</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-gray-900 font-bold text-lg">{entry.pages.toLocaleString('nl-NL')}</span>
+                    <span className="font-bold text-lg" style={{ color: '#155e68' }}>{entry.pages.toLocaleString('nl-NL')}</span>
                     <p className="text-xs text-gray-500">pagina's</p>
                   </div>
                 </div>
@@ -340,15 +336,15 @@ export default async function DashboardPage() {
         )}
 
         {/* Activity Feed */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-white p-6 rounded-lg border" style={{ borderColor: '#155e68' }}>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2" style={{ color: '#155e68' }}>
             📰 Vrienden activiteit
           </h2>
           {activitiesWithData.length > 0 ? (
             <div className="space-y-4">
               {activitiesWithData.map((activity) => (
                 <div key={activity.id} className="flex gap-3 pb-3 border-b border-gray-100 last:border-0">
-                  <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#e6f2f3' }}>
                     <span className="text-sm">
                       {activity.activity_type === 'finished_book' ? '✅' :
                        activity.activity_type === 'started_book' ? '📖' :
@@ -388,7 +384,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-gray-500 text-center py-8">
               Nog geen activiteit van vrienden.
               <br />
-              <Link href="/dashboard/friends" className="text-teal-600 hover:underline">
+              <Link href="/dashboard/friends" className="hover:underline" style={{ color: '#155e68' }}>
                 Voeg vrienden toe
               </Link> om hun leesactiviteit te zien!
             </p>
