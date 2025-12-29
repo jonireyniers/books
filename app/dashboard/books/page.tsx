@@ -21,7 +21,7 @@ const statusColors: Record<ReadingStatus, string> = {
   'verlanglijst': 'bg-purple-50 text-purple-700 border border-purple-200'
 }
 
-type Tab = 'alle' | 'wil_lezen' | 'bezig' | 'gelezen'
+type Tab = 'alle' | 'wil_lezen' | 'bezig' | 'gelezen' | 'verlanglijst'
 
 export default function BooksPage() {
   const [activeTab, setActiveTab] = useState<Tab>('alle')
