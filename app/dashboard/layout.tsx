@@ -19,6 +19,7 @@ export default function DashboardLayout({
   const [pendingRequests, setPendingRequests] = useState(0)
   const [showTooltip, setShowTooltip] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     loadUser()
@@ -141,6 +142,21 @@ export default function DashboardLayout({
             </nav>
             {/* User Profile - Minimal */}
             <div className="flex items-center gap-3">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-neutral-600 hover:text-neutral-900"
+                aria-label="Menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+
               {username && (
                 <div 
                   className="relative group"
@@ -173,6 +189,42 @@ export default function DashboardLayout({
             </div>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-neutral-200">
+            <nav className="px-6 py-4 space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === item.href
+                      ? 'bg-teal-50 text-teal-700'
+                      : 'text-neutral-600 hover:bg-neutral-100'
+                  }`}
+                >
+                  <span>{item.name}</span>
+                  {item.href === '/dashboard/lending' && pendingRequests > 0 && (
+                    <span className="w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-semibold">
+                      {pendingRequests}
+                    </span>
+                  )}
+                </Link>
+              ))}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  handleLogout()
+                }}
+                className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors"
+              >
+                Uitloggen
+              </button>
+            </nav>
+          </div>
+        )}
       </header>
 
       <main className="max-w-6xl mx-auto px-6 lg:px-8 py-12">
