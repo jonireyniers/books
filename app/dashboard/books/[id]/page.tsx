@@ -8,7 +8,8 @@ import StatusSelector from './StatusSelector'
 const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
   'bezig': 'Aan het lezen',
-  'gelezen': 'Gelezen'
+  'gelezen': 'Gelezen',
+  'verlanglijst': 'Verlanglijst'
 }
 
 export default async function BookDetailPage({ params }: { params: Promise<{ id: string }> }) {
