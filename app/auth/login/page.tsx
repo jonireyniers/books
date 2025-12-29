@@ -12,6 +12,10 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetSuccess, setResetSuccess] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -66,6 +70,112 @@ function LoginForm() {
     } else {
       setLoading(false)
     }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setResetLoading(true)
+    setError(null)
+
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+
+    if (error) {
+      setError(error.message)
+      setResetLoading(false)
+      return
+    }
+
+    setResetSuccess(true)
+    setResetLoading(false)
+  }
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center mb-6">
+              <Image 
+                src="/bookly.png" 
+                alt="Bookly" 
+                width={120} 
+                height={120} 
+                className="rounded-xl"
+                priority
+              />
+            </div>
+            <h1 className="text-3xl font-semibold text-neutral-900 mb-2 tracking-tight">Wachtwoord vergeten</h1>
+            <p className="text-neutral-500">We sturen je een reset link per email</p>
+          </div>
+
+          {resetSuccess ? (
+            <div className="bg-white p-8 rounded-xl border border-neutral-200 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2">Check je email</h2>
+              <p className="text-neutral-600 mb-6">
+                We hebben een wachtwoord reset link gestuurd naar <strong>{resetEmail}</strong>
+              </p>
+              <button
+                onClick={() => {
+                  setShowForgotPassword(false)
+                  setResetSuccess(false)
+                  setResetEmail('')
+                }}
+                className="text-neutral-900 hover:underline font-medium"
+              >
+                Terug naar login
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleForgotPassword} className="bg-white p-8 rounded-xl border border-neutral-200">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-100 mb-6">
+                  {error}
+                </div>
+              )}
+
+              <div className="mb-6">
+                <label htmlFor="reset-email" className="block text-sm font-medium text-neutral-900 mb-2">
+                  Email
+                </label>
+                <input
+                  id="reset-email"
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
+                  placeholder="jouw@email.com"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={resetLoading}
+                className="w-full text-white py-3.5 px-4 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                style={{ backgroundColor: '#155e68' }}
+              >
+                {resetLoading ? 'Bezig...' : 'Verstuur reset link'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(false)}
+                className="w-full text-center text-sm text-neutral-600 mt-4 hover:underline"
+              >
+                Terug naar login
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -128,6 +238,15 @@ function LoginForm() {
                 className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:border-neutral-400 focus:outline-none transition-colors text-neutral-900"
                 placeholder="••••••••"
               />
+              <div className="text-right mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-neutral-600 hover:text-neutral-900 hover:underline"
+                >
+                  Wachtwoord vergeten?
+                </button>
+              </div>
             </div>
           </div>
           
