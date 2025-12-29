@@ -10,13 +10,15 @@ import QuickStatusChange from './QuickStatusChange'
 const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
   'bezig': 'Aan het lezen',
-  'gelezen': 'Gelezen'
+  'gelezen': 'Gelezen',
+  'verlanglijst': 'Verlanglijst'
 }
 
 const statusColors: Record<ReadingStatus, string> = {
   'wil_lezen': 'bg-blue-50 text-blue-700 border border-blue-200',
   'bezig': 'bg-amber-50 text-amber-700 border border-amber-200',
-  'gelezen': 'bg-teal-50 text-teal-700 border border-teal-200'
+  'gelezen': 'bg-teal-50 text-teal-700 border border-teal-200',
+  'verlanglijst': 'bg-purple-50 text-purple-700 border border-purple-200'
 }
 
 type Tab = 'alle' | 'wil_lezen' | 'bezig' | 'gelezen'
