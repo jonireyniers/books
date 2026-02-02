@@ -85,7 +85,7 @@ export default function DashboardLayout({
     { name: 'Leesdoelen', href: '/dashboard/goals' },
     { name: 'Vrienden', href: '/dashboard/friends' },
     { name: 'Aanbevelingen', href: '/dashboard/recommendations' },
-    { name: 'Leen verzoeken', href: '/dashboard/lending' },
+    { name: 'Uitlenen boeken', href: '/dashboard/lending' },
   ]
 
   return (

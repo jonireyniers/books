@@ -56,9 +56,9 @@ export default async function DashboardPage() {
   // Leaderboard - pages read this year
   const { data: leaderboardData } = await supabase
     .from('books')
-    .select('user_id, status, end_date, page_count')
+    .select('user_id, status, end_date, page_count, pages_read')
     .in('user_id', [...friendIds, user.id])
-    .eq('status', 'gelezen')
+    .in('status', ['gelezen', 'gestopt'])
 
   const leaderboard = [...friendIds, user.id].map(userId => {
     const userBooks = leaderboardData?.filter(b => {
@@ -70,10 +70,19 @@ export default async function DashboardPage() {
       }
       
       // Als er geen end_date is maar wel status gelezen, tel het mee (recent toegevoegd)
-      return true
+      return b.status === 'gelezen'
     }) || []
-    const totalPages = userBooks.reduce((sum, book) => sum + (book.page_count || 0), 0)
-    const bookCount = userBooks.length
+    
+    // Voor gelezen boeken: tel de volledige page_count
+    // Voor gestopte boeken: tel de pages_read
+    const totalPages = userBooks.reduce((sum, book) => {
+      if (book.status === 'gestopt' && book.pages_read) {
+        return sum + book.pages_read
+      }
+      return sum + (book.page_count || 0)
+    }, 0)
+    
+    const bookCount = userBooks.filter(b => b.status === 'gelezen').length
     return { userId, pages: totalPages, bookCount }
   })
     .sort((a, b) => b.pages - a.pages)

@@ -9,6 +9,7 @@ interface LendingRequest {
   requester_id: string
   book_id: string
   message: string | null
+  response_message?: string | null
   status: 'pending' | 'approved' | 'rejected' | 'returned'
   created_at: string
   requester: {
@@ -27,6 +28,9 @@ export default function LendingRequestsPage() {
   const [myRequests, setMyRequests] = useState<LendingRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'received' | 'sent'>('received')
+  const [respondingTo, setRespondingTo] = useState<string | null>(null)
+  const [responseMessage, setResponseMessage] = useState('')
+  const [responseType, setResponseType] = useState<'approved' | 'rejected' | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -112,17 +116,50 @@ export default function LendingRequestsPage() {
     setLoading(false)
   }
 
-  const handleResponse = async (requestId: string, newStatus: 'approved' | 'rejected') => {
+  const handleResponse = async (requestId: string, newStatus: 'approved' | 'rejected', message?: string) => {
+    const updateData: any = { 
+      status: newStatus, 
+      updated_at: new Date().toISOString() 
+    }
+    
+    if (message) {
+      updateData.response_message = message
+    }
+
     const { data, error } = await supabase
       .from('lending_requests')
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', requestId)
       .select()
 
-    if (!error) {
-      loadRequests()
-    } else {
-      alert('Fout bij updaten: ' + error.message)
+    if (error) {
+      console.error('Error updating request:', error)
+      if (error.message.includes('duplicate key')) {
+        alert('Er is al een actief verzoek voor dit boek.')
+      } else {
+        alert('Fout bij updaten: ' + error.message)
+      }
+      setRespondingTo(null)
+      setResponseMessage('')
+      setResponseType(null)
+      return
+    }
+
+    setRespondingTo(null)
+    setResponseMessage('')
+    setResponseType(null)
+    loadRequests()
+  }
+
+  const openResponseDialog = (requestId: string, type: 'approved' | 'rejected') => {
+    setRespondingTo(requestId)
+    setResponseType(type)
+    setResponseMessage('')
+  }
+
+  const submitResponse = () => {
+    if (respondingTo && responseType) {
+      handleResponse(respondingTo, responseType, responseMessage)
     }
   }
 
@@ -167,9 +204,54 @@ export default function LendingRequestsPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-light text-gray-900 mb-2">Leen verzoeken</h1>
+        <h1 className="text-3xl font-light text-gray-900 mb-2">Uitlenen boeken</h1>
         <p className="text-gray-600">Beheer verzoeken om boeken te lenen</p>
       </div>
+
+      {/* Response Modal */}
+      {respondingTo && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              {responseType === 'approved' ? 'Verzoek goedkeuren' : 'Verzoek afwijzen'}
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              {responseType === 'approved' 
+                ? 'Je kunt een optioneel bericht toevoegen met details over wanneer het boek opgehaald kan worden.'
+                : 'Je kunt een optioneel bericht toevoegen waarom je dit verzoek afwijst.'}
+            </p>
+            <textarea
+              value={responseMessage}
+              onChange={(e) => setResponseMessage(e.target.value)}
+              placeholder="Optioneel bericht..."
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+              rows={4}
+            />
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setRespondingTo(null)
+                  setResponseMessage('')
+                  setResponseType(null)
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Annuleren
+              </button>
+              <button
+                onClick={submitResponse}
+                className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors ${
+                  responseType === 'approved'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {responseType === 'approved' ? 'Goedkeuren' : 'Afwijzen'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-gray-200">
@@ -250,14 +332,14 @@ export default function LendingRequestsPage() {
                     {request.status === 'pending' ? (
                       <>
                         <button
-                          onClick={() => handleResponse(request.id, 'approved')}
+                          onClick={() => openResponseDialog(request.id, 'approved')}
                           className="w-full px-6 py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all text-base font-bold shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:scale-105"
                         >
                           <span className="text-xl">✓</span>
                           <span>Goedkeuren</span>
                         </button>
                         <button
-                          onClick={() => handleResponse(request.id, 'rejected')}
+                          onClick={() => openResponseDialog(request.id, 'rejected')}
                           className="w-full px-6 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-xl hover:from-red-700 hover:to-rose-700 transition-all text-base font-bold shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:scale-105"
                         >
                           <span className="text-xl">✗</span>
@@ -324,6 +406,11 @@ export default function LendingRequestsPage() {
                         <p className="text-sm text-green-800 font-medium">
                           ✅ Goedgekeurd! Je mag dit boek ophalen.
                         </p>
+                        {request.response_message && (
+                          <p className="text-sm text-green-700 mt-2">
+                            <strong>Bericht van eigenaar:</strong> "{request.response_message}"
+                          </p>
+                        )}
                       </div>
                     )}
                     
@@ -332,6 +419,11 @@ export default function LendingRequestsPage() {
                         <p className="text-sm text-red-800">
                           Dit verzoek is afgewezen.
                         </p>
+                        {request.response_message && (
+                          <p className="text-sm text-red-700 mt-2">
+                            <strong>Reden:</strong> "{request.response_message}"
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>

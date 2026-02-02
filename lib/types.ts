@@ -1,4 +1,4 @@
-export type ReadingStatus = 'verlanglijst' | 'wil_lezen' | 'bezig' | 'gelezen'
+export type ReadingStatus = 'verlanglijst' | 'wil_lezen' | 'bezig' | 'gelezen' | 'gestopt'
 export type FriendshipStatus = 'pending' | 'accepted' | 'blocked'
 
 export interface Profile {
@@ -27,6 +27,7 @@ export interface Book {
   review: string | null
   is_public: boolean
   page_count: number | null
+  pages_read: number | null
   recommend_to_friends: boolean
   available_for_lending: boolean
   created_at: string

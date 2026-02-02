@@ -11,17 +11,19 @@ const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
   'bezig': 'Aan het lezen',
   'gelezen': 'Gelezen',
-  'verlanglijst': 'Verlanglijst'
+  'verlanglijst': 'Verlanglijst',
+  'gestopt': 'Gestopt'
 }
 
 const statusColors: Record<ReadingStatus, string> = {
   'wil_lezen': 'bg-blue-50 text-blue-700 border border-blue-200',
   'bezig': 'bg-amber-50 text-amber-700 border border-amber-200',
   'gelezen': 'bg-teal-50 text-teal-700 border border-teal-200',
-  'verlanglijst': 'bg-purple-50 text-purple-700 border border-purple-200'
+  'verlanglijst': 'bg-purple-50 text-purple-700 border border-purple-200',
+  'gestopt': 'bg-red-50 text-red-700 border border-red-200'
 }
 
-type Tab = 'alle' | 'wil_lezen' | 'bezig' | 'gelezen' | 'verlanglijst'
+type Tab = 'alle' | 'wil_lezen' | 'bezig' | 'gelezen' | 'verlanglijst' | 'gestopt'
 
 export default function BooksPage() {
   const [activeTab, setActiveTab] = useState<Tab>('alle')
@@ -60,6 +62,7 @@ export default function BooksPage() {
     { id: 'wil_lezen' as Tab, name: 'Wil lezen', icon: '📚' },
     { id: 'bezig' as Tab, name: 'Aan het lezen', icon: '📖' },
     { id: 'gelezen' as Tab, name: 'Gelezen', icon: '✅' },
+    { id: 'gestopt' as Tab, name: 'Gestopt', icon: '🛑' },
   ]
 
   const filteredBooks = activeTab === 'alle' 

@@ -9,7 +9,8 @@ const statusLabels: Record<ReadingStatus, string> = {
   'wil_lezen': 'Wil lezen',
   'bezig': 'Aan het lezen',
   'gelezen': 'Gelezen',
-  'verlanglijst': 'Verlanglijst'
+  'verlanglijst': 'Verlanglijst',
+  'gestopt': 'Gestopt'
 }
 
 export default async function BookDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -162,6 +163,15 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
           <div className="mb-6">
             <h2 className="text-sm font-medium text-neutral-700 mb-2">Persoonlijke opmerking</h2>
             <p className="text-neutral-600 bg-neutral-50 p-4 rounded-lg">{book.review}</p>
+          </div>
+        )}
+
+        {book.status === 'gestopt' && book.pages_read && (
+          <div className="mb-6">
+            <h2 className="text-sm font-medium text-neutral-700 mb-2">Gelezen pagina's</h2>
+            <p className="text-neutral-900">
+              {book.pages_read} {book.page_count && `van ${book.page_count}`} pagina's
+            </p>
           </div>
         )}
 
