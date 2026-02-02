@@ -9,14 +9,16 @@ const statusLabels: Record<ReadingStatus, string> = {
   'verlanglijst': 'Verlanglijst',
   'wil_lezen': 'Wil lezen',
   'bezig': 'Aan het lezen',
-  'gelezen': 'Gelezen'
+  'gelezen': 'Gelezen',
+  'gestopt': 'Gestopt'
 }
 
 const statusColors: Record<ReadingStatus, string> = {
   'verlanglijst': 'bg-purple-50 text-purple-700 border-purple-200',
   'wil_lezen': 'bg-blue-50 text-blue-700 border-blue-200',
   'bezig': 'bg-amber-50 text-amber-700 border-amber-200',
-  'gelezen': 'bg-teal-50 text-teal-700 border-teal-200'
+  'gelezen': 'bg-teal-50 text-teal-700 border-teal-200',
+  'gestopt': 'bg-red-50 text-red-700 border-red-200'
 }
 
 interface QuickStatusChangeProps {
